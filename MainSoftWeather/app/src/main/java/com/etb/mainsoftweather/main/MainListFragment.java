@@ -74,6 +74,8 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
 
     private void setupRecyclerView(){
         _adapter = new MainAdapter(getContext());
+        _adapter.setTemperatureTransformer(TemperatureTransformers.CELSIUS);
+
         recyclerView.setAdapter(_adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         contentView.setOnRefreshListener(this);

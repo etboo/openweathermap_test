@@ -16,4 +16,11 @@
     <color name="refresh_progress_3">#FF9800</color>
     <color name="sliding_menu_text_color">#8C8C8C</color>
 
+    <color name="material_blue">#2196F3</color>
+    <color name="material_red">#FF5722</color>
+    <color name="material_pink">#E91E63</color>
+    <color name="material_green">#43A047</color>
+    <color name="material_orange">#FB8C00</color>
+    <color name="material_yellow">#FFEB3B</color>
+
 </resources>
