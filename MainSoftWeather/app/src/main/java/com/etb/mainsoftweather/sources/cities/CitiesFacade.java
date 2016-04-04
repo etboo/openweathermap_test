@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 
 import com.etb.mainsoftweather.PermissionManager;
+import com.etb.mainsoftweather.base.Utils;
 import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
 import com.etb.mainsoftweather.model.WeatherList;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
@@ -38,8 +40,15 @@ public class CitiesFacade {
         return getSavedData();
     }
 
-    public void removeData(City data) {
-
+    public Observable<Boolean> removeData(final City data) {
+        return Utils.createAndDefer(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                _db.remoteData(Arrays.asList(data));
+                subscriber.onNext(true);
+                subscriber.onCompleted();
+            }
+        });
     }
 
     private Observable<List<City>> getSavedData(){
@@ -80,8 +89,15 @@ public class CitiesFacade {
 
     }
 
-    public void saveData(City data){
-        _db.saveData(Arrays.asList(data));
+    public Observable<Boolean> saveData(final City data){
+        return Utils.createAndDefer(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                _db.saveData(Arrays.asList(data));
+                subscriber.onNext(true);
+                subscriber.onCompleted();
+            }
+        });
     }
 
     public Observable<List<City>> autocomplete(String term, int count){

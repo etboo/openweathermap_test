@@ -1,5 +1,6 @@
 package com.etb.mainsoftweather.base;
 
+import com.etb.mainsoftweather.history.HistoryComponent;
 import com.etb.mainsoftweather.main.MainComponent;
 import com.etb.mainsoftweather.sources.CitiesModule;
 import com.etb.mainsoftweather.sources.DBModule;
@@ -16,4 +17,6 @@ import dagger.Component;
 @Singleton @Component(modules = {DBModule.class, NetworkModule.class})
 public interface ApplicationComponent {
     MainComponent plus(WeatherModule weatherModule, CitiesModule citiesModule);
+
+    HistoryComponent plus(WeatherModule weatherModule);
 }

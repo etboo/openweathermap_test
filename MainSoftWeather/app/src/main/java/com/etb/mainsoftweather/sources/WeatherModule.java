@@ -7,6 +7,7 @@ package com.etb.mainsoftweather.sources;
 import android.content.Context;
 
 import com.etb.mainsoftweather.main.ViewScope;
+import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
 import com.etb.mainsoftweather.sources.weather.WeatherAPI;
 import com.etb.mainsoftweather.sources.weather.WeatherFacade;
@@ -26,7 +27,7 @@ public class WeatherModule {
     }
 
     @Provides @ViewScope
-    public DAO<Weather, String> providesDAO(DatabaseHelper helper){
+    public DAO<Weather, City> providesDAO(DatabaseHelper helper){
         try {
             return helper.createWeatherDAO();
         } catch (SQLException e) {
@@ -36,7 +37,7 @@ public class WeatherModule {
     }
 
     @Provides @ViewScope
-    public WeatherFacade provideFacade(WeatherAPI network, DAO<Weather, String> db){
+    public WeatherFacade provideFacade(WeatherAPI network, DAO<Weather, City> db){
         return new WeatherFacade(network, db);
     }
 

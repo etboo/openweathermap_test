@@ -91,7 +91,6 @@ public class SearchViewWrapper {
 
             @Override
             public boolean onSuggestionClick(int position) {
-                _view.setQuery(_suggestions.get(position).name, false);
                 _view.clearFocus();
 
                 if(_clickListener != null)
@@ -100,7 +99,6 @@ public class SearchViewWrapper {
                 return true;
             }
         });
-
 
         _view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 

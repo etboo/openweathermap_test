@@ -6,18 +6,18 @@ import com.etb.mainsoftweather.base.MvpLceRxPresenter;
 import com.etb.mainsoftweather.base.SearchViewWrapper;
 import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
-import com.etb.mainsoftweather.model.WeatherList;
 import com.etb.mainsoftweather.sources.cities.CitiesFacade;
 import com.etb.mainsoftweather.sources.weather.WeatherFacade;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
 import rx.functions.Func1;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by etb on 02.04.16.
@@ -28,9 +28,88 @@ public class MainListPresenter extends MvpLceRxPresenter<MainListView, List<Weat
 
     private CitiesFacade _cities;
 
+    private CompositeSubscription _subscription;
+
     @Inject public MainListPresenter(CitiesFacade cities, WeatherFacade weather){
          _cities = cities;
         _weather = weather;
+    }
+
+    public void setupFlows(MainListView view){
+        subscribe(processClicks(view));
+        subscribe(processLongClicks(view));
+    }
+
+    private Subscription processClicks(final MainListView view){
+        return  view.listClicks().map(new Func1<Weather, City>() {
+            @Override
+            public City call(Weather weather) {
+                return weather.city;
+            }
+        }).subscribe(new Subscriber<City>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                MainListPresenter.this.onError(e, false);
+            }
+
+            @Override
+            public void onNext(City city) {
+                view.navigateToForecast(city);
+            }
+        });
+    }
+
+    private Subscription processLongClicks(final MainListView view){
+        return  view.listLongClicks().map(new Func1<Weather, City>() {
+            @Override
+            public City call(Weather weather) {
+                return weather.city;
+            }
+        }).subscribe(new Subscriber<City>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                MainListPresenter.this.onError(e, false);
+            }
+
+            @Override
+            public void onNext(final City city) {
+                subscribe(_weather.removeAllWith(city).flatMap(new Func1<Boolean, Observable<Boolean>>() {
+                    @Override
+                    public Observable<Boolean> call(Boolean result) {
+                        return _cities.removeData(city);
+                    }
+                }).flatMap(new Func1<Boolean, Observable<List<Weather>>>() {
+                    @Override
+                    public Observable<List<Weather>> call(Boolean result) {
+                        return _cities.getData(true).flatMap(getForecast(false));
+                    }
+                }), false);
+            }
+        });
+    }
+
+    private void subscribe(Subscription subscription){
+        if(_subscription == null)
+            _subscription = new CompositeSubscription();
+
+        _subscription.add(subscription);
+    }
+
+    @Override
+    public void detachView(boolean retainInstance) {
+        super.detachView(retainInstance);
+        _subscription.unsubscribe();
+        _subscription = null;
     }
 
     public void loadForecast(boolean pullToRefresh){
@@ -86,7 +165,11 @@ public class MainListPresenter extends MvpLceRxPresenter<MainListView, List<Weat
 
     @Override
     public void onSuggestionClick(City item) {
-        _cities.saveData(item);
-        loadForecast(false);
+        subscribe(_cities.saveData(item).flatMap(new Func1<Boolean, Observable<List<Weather>>>() {
+            @Override
+            public Observable<List<Weather>> call(Boolean aVoid) {
+                return _cities.getData(true).flatMap(getForecast(false));
+            }
+        }), false);
     }
 }

@@ -3,6 +3,7 @@ package com.etb.mainsoftweather.sources.weather;
 import android.util.Log;
 
 import com.etb.mainsoftweather.base.Utils;
+import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
 import com.etb.mainsoftweather.model.WeatherList;
 import com.etb.mainsoftweather.sources.DAO;
@@ -25,9 +26,9 @@ import rx.functions.Func1;
 public class WeatherFacade  {
 
     private WeatherAPI _network;
-    private DAO<Weather, String> _db;
+    private DAO<Weather, City> _db;
 
-    public WeatherFacade(WeatherAPI network, DAO<Weather, String> db){
+    public WeatherFacade(WeatherAPI network, DAO<Weather, City> db){
         _network = network;
         _db = db;
     }
@@ -103,11 +104,18 @@ public class WeatherFacade  {
         });
     }
 
+    public Observable<List<Weather>> findInDb(City city){
+        return _db.find(city);
+    }
 
-
-
-    public void removeData(Weather data) {
-
+    public Observable<Boolean> removeAllWith(City city) {
+        return _db.find(city).flatMap(new Func1<List<Weather>, Observable<Boolean>>() {
+            @Override
+            public Observable<Boolean> call(List<Weather> weathers) {
+                _db.remoteData(weathers);
+                return Observable.just(true);
+            }
+        });
     }
 
 }

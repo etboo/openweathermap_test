@@ -1,32 +1,22 @@
 package com.etb.mainsoftweather;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.etb.mainsoftweather.base.Utils;
 import com.etb.mainsoftweather.main.MainListFragment;
-import com.etb.mainsoftweather.sources.cities.CityLocalFinder;
-
-import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Notification;
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
 
-public class MainActivity extends AppCompatActivity implements PermissionManager.PermissionsHolder{
-
-    Subscriber<? super Boolean> _permissionSubscriber;
+public class MainActivity extends AppCompatActivity implements PermissionManager.PermissionsHolder, Navigator{
 
     @Bind(R.id.toolbar_actionbar)Toolbar toolbar;
 
@@ -39,9 +29,7 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentContainer, new MainListFragment())
-                    .commit();
+            goTo(new MainListFragment());
         }
     }
 
@@ -83,5 +71,12 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
         } else {
             ActivityCompat.requestPermissions(this, new String[]{permission}, permissionId);
         }
+    }
+
+    @Override
+    public void goTo(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .commit();
     }
 }

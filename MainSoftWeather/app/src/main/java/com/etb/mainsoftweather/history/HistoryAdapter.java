@@ -1,4 +1,4 @@
-package com.etb.mainsoftweather.main;
+package com.etb.mainsoftweather.history;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -22,18 +22,20 @@ import butterknife.ButterKnife;
 /**
  * Created by etb on 02.04.16.
  */
-public class MainAdapter extends BaseRxRecyclerViewAdapter<MainAdapter.ViewHolder, Weather> {
+public class HistoryAdapter extends BaseRxRecyclerViewAdapter<HistoryAdapter.ViewHolder, Weather> {
 
     private CityPresentation _presentation;
 
-    public MainAdapter(Context context){
+    public HistoryAdapter(Context context){
         super(context);
         _presentation = new CityPresentation();
     }
 
     @Override
     protected View inflateCustomView(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        return inflater.inflate(R.layout.item_main, null, false);
+        View result = inflater.inflate(R.layout.item_main, null, false);
+        result.findViewById(R.id.mainItem_infoLayout).setVisibility(View.INVISIBLE);
+        return result;
     }
 
     @Override
@@ -46,7 +48,6 @@ public class MainAdapter extends BaseRxRecyclerViewAdapter<MainAdapter.ViewHolde
         _presentation.bind(forecast, holder);
 
         int color = MaterialColorPicker.getMaterialColor(getContext());
-        holder.infoLayout.setBackgroundColor(color);
         holder.tempLayout.setBackgroundColor(color);
         holder.windLayout.setBackgroundColor(color);
     }
@@ -57,22 +58,20 @@ public class MainAdapter extends BaseRxRecyclerViewAdapter<MainAdapter.ViewHolde
 
     class ViewHolder extends RecyclerView.ViewHolder{
 
-        @Bind(R.id.mainItem_city)TextView city;
         @Bind(R.id.mainItem_avegare_temperature)TextView temperature;
         @Bind(R.id.mainItem_min_temperature)TextView minTemperature;
         @Bind(R.id.mainItem_max_temperature)TextView maxTemperature;
-        @Bind(R.id.mainItem_country)TextView country;
         @Bind(R.id.mainItem_updated)TextView updated;
         @Bind(R.id.mainItem_wind_angle)TextView windAngle;
         @Bind(R.id.mainItem_wind_speed)TextView windSpeed;
 
-        @Bind(R.id.mainItem_infoLayout)ViewGroup infoLayout;
         @Bind(R.id.mainItem_tempLayout)ViewGroup tempLayout;
         @Bind(R.id.mainItem_windLayout)ViewGroup windLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
         }
     }
 
@@ -111,9 +110,7 @@ public class MainAdapter extends BaseRxRecyclerViewAdapter<MainAdapter.ViewHolde
             holder.minTemperature.setText(formatTemp(weather.temp_min));
             holder.windAngle.setText(getDirection(weather.wind_deg));
             holder.windSpeed.setText(Float.toString(weather.wind_speed) + " m/sec");
-            holder.city.setText(weather.city.name);
             holder.updated.setText(formatDate(weather.millis));
-            holder.country.setText(weather.city.country);
 
         }
 

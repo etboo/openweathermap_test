@@ -1,4 +1,4 @@
-package com.etb.mainsoftweather.main;
+package com.etb.mainsoftweather.history;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,15 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.etb.mainsoftweather.Navigator;
 import com.etb.mainsoftweather.R;
 import com.etb.mainsoftweather.WeatherApp;
 import com.etb.mainsoftweather.base.SearchViewWrapper;
 import com.etb.mainsoftweather.base.TemperatureTransformers;
-import com.etb.mainsoftweather.history.HistoryFragment;
 import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
-import com.etb.mainsoftweather.sources.CitiesModule;
 import com.etb.mainsoftweather.sources.WeatherModule;
 import com.hannesdorfmann.mosby.mvp.viewstate.lce.LceViewState;
 import com.hannesdorfmann.mosby.mvp.viewstate.lce.MvpLceViewStateFragment;
@@ -37,15 +34,26 @@ import rx.Observable;
 /**
  * Created by etb on 02.04.16.
  */
-public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout, List<Weather>, MainListView, MainListPresenter> implements SwipeRefreshLayout.OnRefreshListener, MainListView {
+public class HistoryFragment extends MvpLceViewStateFragment<SwipeRefreshLayout, List<Weather>, HistoryListView, HistoryPresenter> implements SwipeRefreshLayout.OnRefreshListener, HistoryListView {
 
-    MainComponent _di;
+    private static final String CITY_KEY = HistoryFragment.class.getSimpleName() + ".City";
 
-    @Bind(R.id.recyclerView)
+    public static HistoryFragment newInstance(City city){
+        HistoryFragment result = new HistoryFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(CITY_KEY, city);
+
+        result.setArguments(args);
+        return result;
+    }
+
+    HistoryComponent _di;
+
+    @Bind(R.id.contentView)
     RecyclerView recyclerView;
 
-    private MainAdapter _adapter;
-    private SearchViewWrapper _searchWrapper;
+    private HistoryAdapter _adapter;
+
 
     @Nullable
     @Override
@@ -53,13 +61,12 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
         inject();
         setHasOptionsMenu(true);
 
-        return inflater.inflate(R.layout.fragment_main, null, false);
+        return inflater.inflate(R.layout.fragment_history, null, false);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        _searchWrapper.dropView();
     }
 
     @Override
@@ -68,18 +75,11 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
         ButterKnife.bind(this, view);
 
         setupRecyclerView();
-        presenter.setupFlows(this);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_city_picker, menu);
-
-        setupSearchView(menu);
-    }
 
     private void setupRecyclerView(){
-        _adapter = new MainAdapter(getContext());
+        _adapter = new HistoryAdapter(getContext());
         _adapter.setTemperatureTransformer(TemperatureTransformers.CELSIUS);
 
         recyclerView.setAdapter(_adapter);
@@ -96,18 +96,6 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
         _di = null;
     }
 
-    private void setupSearchView(Menu menu){
-        MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
-        _searchWrapper = new SearchViewWrapper((SearchView) MenuItemCompat.getActionView(mSearchMenuItem));
-        _searchWrapper.setProvider(presenter);
-        _searchWrapper.setClickListener(presenter);
-    }
-
-    private Navigator navigator(){
-        return (Navigator) getActivity();
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,12 +103,13 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
     }
 
     private void inject(){
-        _di = WeatherApp.injector().plus(new WeatherModule(getContext()), new CitiesModule(getContext()));
+        _di = WeatherApp.injector().plus(new WeatherModule(getContext()));
+
         _di.inject(this);
     }
 
     @Override
-    public LceViewState<List<Weather>, MainListView> createViewState() {
+    public LceViewState<List<Weather>, HistoryListView> createViewState() {
         return  new RetainingLceViewState<>();
     }
 
@@ -135,8 +124,11 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
     }
 
     @Override
-    public MainListPresenter createPresenter() {
-        return _di.presenter();
+    public HistoryPresenter createPresenter() {
+        HistoryPresenter presenter =  _di.presenter();
+        //TODO: put city in constructor
+        presenter.injectCity((City) getArguments().getParcelable(CITY_KEY));
+        return presenter;
     }
 
     @Override
@@ -172,7 +164,7 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
 
     @Override
     public void loadData(boolean pullToRefresh) {
-        presenter.loadForecast(pullToRefresh);
+        presenter.loadForecast();
     }
 
     @Override
@@ -180,18 +172,4 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
         loadData(true);
     }
 
-    @Override
-    public Observable<Weather> listLongClicks() {
-        return _adapter.longClicks();
-    }
-
-    @Override
-    public Observable<Weather> listClicks() {
-        return _adapter.clicks();
-    }
-
-    @Override
-    public void navigateToForecast(City city) {
-        navigator().goTo(HistoryFragment.newInstance(city));
-    }
 }
