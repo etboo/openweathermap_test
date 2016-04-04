@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.etb.mainsoftweather"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+
+        buildConfigField "String", "WEATHER_API_KEY", "\"da99dc87e76267d02187206909deb2ff\""
+        buildConfigField "Integer", "LOCATION_TTL", "1000000"
+        buildConfigField "String", "WEATHER_URL", "\"http://api.openweathermap.org\""
+        buildConfigField "Integer", "HANDLE_LOCATION_TIMEOUT", "10000"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.jakewharton:butterknife:7.0.1'
+
+    compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
+    compile 'com.hannesdorfmann.mosby:viewstate:2.0.1'
+
+    compile 'com.squareup.retrofit:retrofit:1.7.0'
+
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+
+    compile 'io.reactivex:rxjava:1.0.10'
+    compile 'io.reactivex:rxandroid:1.1.0'
+
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+
+    compile 'com.google.dagger:dagger:'+ rootProject.ext.dagger2Version
+    apt 'com.google.dagger:dagger-compiler:'+rootProject.ext.dagger2Version
+}
