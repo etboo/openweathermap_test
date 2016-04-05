@@ -16,6 +16,7 @@ android {
         buildConfigField "Integer", "LOCATION_TTL", "1000000"
         buildConfigField "String", "WEATHER_URL", "\"http://api.openweathermap.org\""
         buildConfigField "Integer", "HANDLE_LOCATION_TIMEOUT", "10000"
+        buildConfigField "Integer", "DEFAULT_UPDATE_PERIOD", "10"
     }
     buildTypes {
         release {

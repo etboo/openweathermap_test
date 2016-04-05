@@ -50,25 +50,29 @@ public abstract class MvpLceRxPresenter<V extends MvpLceView<M>, M>
 
         unsubscribe();
 
-        subscriber = new Subscriber<M>() {
-            private boolean ptr = pullToRefresh;
-
-            @Override public void onCompleted() {
-                MvpLceRxPresenter.this.onCompleted();
-            }
-
-            @Override public void onError(Throwable e) {
-                MvpLceRxPresenter.this.onError(e, ptr);
-            }
-
-            @Override public void onNext(M m) {
-                MvpLceRxPresenter.this.onNext(m);
-            }
-        };
+        subscriber = getSubscriptionAdapter(this, pullToRefresh);
 
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
+    }
+
+    protected static <T> Subscriber<T> getSubscriptionAdapter(final MvpLceRxPresenter presenter, final boolean pullToRefresh){
+        return new Subscriber<T>() {
+            private boolean ptr = pullToRefresh;
+
+            @Override public void onCompleted() {
+                presenter.onCompleted();
+            }
+
+            @Override public void onError(Throwable e) {
+                presenter.onError(e, ptr);
+            }
+
+            @Override public void onNext(T m) {
+                presenter.onNext(m);
+            }
+        };
     }
 
     protected void onCompleted() {

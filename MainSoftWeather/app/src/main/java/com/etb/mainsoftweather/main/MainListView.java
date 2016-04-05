@@ -1,5 +1,7 @@
 package com.etb.mainsoftweather.main;
 
+import android.content.Context;
+
 import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
 import com.hannesdorfmann.mosby.mvp.lce.MvpLceView;
@@ -20,5 +22,7 @@ public interface MainListView extends MvpLceView<List<Weather>> {
     public void navigateToForecast(City city);
 
     public void setTitle(String title);
+
+    public Context getContext();
 
 }

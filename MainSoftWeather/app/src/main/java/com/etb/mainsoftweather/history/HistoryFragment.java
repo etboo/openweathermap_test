@@ -2,23 +2,17 @@ package com.etb.mainsoftweather.history;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.etb.mainsoftweather.MainActivity;
 import com.etb.mainsoftweather.R;
+import com.etb.mainsoftweather.SettingsManager;
 import com.etb.mainsoftweather.WeatherApp;
-import com.etb.mainsoftweather.base.SearchViewWrapper;
-import com.etb.mainsoftweather.base.TemperatureTransformers;
 import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
 import com.etb.mainsoftweather.sources.WeatherModule;
@@ -30,7 +24,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Observable;
 
 /**
  * Created by etb on 02.04.16.
@@ -81,7 +74,7 @@ public class HistoryFragment extends MvpLceViewStateFragment<RecyclerView, List<
 
     private void setupRecyclerView(){
         _adapter = new HistoryAdapter(getContext());
-        _adapter.setTemperatureTransformer(TemperatureTransformers.CELSIUS);
+        _adapter.setTemperatureTransformer(SettingsManager.instance().getTransformer());
 
         recyclerView.setAdapter(_adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

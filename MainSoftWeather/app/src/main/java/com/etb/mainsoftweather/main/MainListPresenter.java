@@ -1,22 +1,31 @@
 package com.etb.mainsoftweather.main;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.etb.mainsoftweather.SettingsManager;
+import com.etb.mainsoftweather.Updater;
 import com.etb.mainsoftweather.base.MvpLceRxPresenter;
 import com.etb.mainsoftweather.base.SearchViewWrapper;
 import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
+import com.etb.mainsoftweather.sources.CitiesModule_ProvideFacadeFactory;
 import com.etb.mainsoftweather.sources.cities.CitiesFacade;
 import com.etb.mainsoftweather.sources.weather.WeatherFacade;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -29,15 +38,17 @@ public class MainListPresenter extends MvpLceRxPresenter<MainListView, List<Weat
     private CitiesFacade _cities;
 
     private CompositeSubscription _subscription;
+    private Subscription _updateSubscription;
 
     @Inject public MainListPresenter(CitiesFacade cities, WeatherFacade weather){
          _cities = cities;
         _weather = weather;
     }
 
+
     public void setupFlows(MainListView view){
-        subscribe(processClicks(view));
-        subscribe(processLongClicks(view));
+        composeSubscriptions(processClicks(view));
+        composeSubscriptions(processLongClicks(view));
     }
 
     private Subscription processClicks(final MainListView view){
@@ -98,7 +109,7 @@ public class MainListPresenter extends MvpLceRxPresenter<MainListView, List<Weat
         });
     }
 
-    private void subscribe(Subscription subscription){
+    private void composeSubscriptions(Subscription subscription){
         if(_subscription == null)
             _subscription = new CompositeSubscription();
 
@@ -144,6 +155,28 @@ public class MainListPresenter extends MvpLceRxPresenter<MainListView, List<Weat
         }
 
         return names;
+    }
+
+    @Override
+    protected void onNext(List<Weather> data) {
+        super.onNext(data);
+        Log.d("TAG-12", "onNext");
+    }
+
+    @Override
+    protected void onCompleted() {
+        Log.d("TAG-12", "onCompleted");
+        super.onCompleted();
+
+        if(_updateSubscription != null)
+            _updateSubscription.unsubscribe();
+
+        _updateSubscription = Observable.just(null).delay(SettingsManager.instance().getUpdatePeriod(), TimeUnit.SECONDS).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object o) {
+                loadForecast(true);
+            }
+        });
     }
 
     @Override

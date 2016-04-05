@@ -11,6 +11,8 @@ import java.util.Random;
  */
 public class MaterialColorPicker {
 
+    private MaterialColorPicker(){}
+
     private static int[] sColors = {R.color.material_blue, R.color.material_green,
             R.color.material_orange, R.color.material_pink,
             R.color.material_red, R.color.material_yellow};

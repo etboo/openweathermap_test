@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.etb.mainsoftweather.MaterialColorPicker;
 import com.etb.mainsoftweather.R;
 import com.etb.mainsoftweather.base.BaseRxRecyclerViewAdapter;
-import com.etb.mainsoftweather.base.TemperatureTransformers;
+import com.etb.mainsoftweather.base.TemperatureTransformer;
 import com.etb.mainsoftweather.model.Weather;
 
 import java.text.SimpleDateFormat;
@@ -57,7 +57,7 @@ public class HistoryAdapter extends BaseRxRecyclerViewAdapter<HistoryAdapter.Vie
 
     }
 
-    public void setTemperatureTransformer(TemperatureTransformers.AbsTrasformer temperatureTransformer){
+    public void setTemperatureTransformer(TemperatureTransformer temperatureTransformer){
         _presentation = new CityPresentation(temperatureTransformer);
     }
 
@@ -79,7 +79,7 @@ public class HistoryAdapter extends BaseRxRecyclerViewAdapter<HistoryAdapter.Vie
 
     private static class CityPresentation{
 
-        private TemperatureTransformers.AbsTrasformer __transformer;
+        private TemperatureTransformer __transformer;
 
         private static String dateFormat = "dd-MM-yyyy hh:mm";
         private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
@@ -88,7 +88,7 @@ public class HistoryAdapter extends BaseRxRecyclerViewAdapter<HistoryAdapter.Vie
 
         CityPresentation(){}
 
-        CityPresentation(TemperatureTransformers.AbsTrasformer trasformer){
+        CityPresentation(TemperatureTransformer trasformer){
             __transformer = trasformer;
         }
 

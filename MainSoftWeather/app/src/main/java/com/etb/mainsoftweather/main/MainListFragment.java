@@ -17,9 +17,10 @@ import android.view.ViewGroup;
 import com.etb.mainsoftweather.MainActivity;
 import com.etb.mainsoftweather.Navigator;
 import com.etb.mainsoftweather.R;
+import com.etb.mainsoftweather.SettingsManager;
+import com.etb.mainsoftweather.Updater;
 import com.etb.mainsoftweather.WeatherApp;
 import com.etb.mainsoftweather.base.SearchViewWrapper;
-import com.etb.mainsoftweather.base.TemperatureTransformers;
 import com.etb.mainsoftweather.history.HistoryFragment;
 import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
@@ -34,6 +35,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by etb on 02.04.16.
@@ -81,7 +86,7 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
 
     private void setupRecyclerView(){
         _adapter = new MainAdapter(getContext());
-        _adapter.setTemperatureTransformer(TemperatureTransformers.CELSIUS);
+        _adapter.setTemperatureTransformer(SettingsManager.instance().getTransformer());
 
         recyclerView.setAdapter(_adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -113,6 +118,7 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
     }
 
     private void inject(){
