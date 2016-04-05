@@ -16,11 +16,13 @@ import com.etb.mainsoftweather.model.WeatherList;
 import com.etb.mainsoftweather.sources.weather.WeatherAPI;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
@@ -54,7 +56,12 @@ public class CityLocalFinder {
                     }
                 }));
             }
-        }).timeout(BuildConfig.HANDLE_LOCATION_TIMEOUT, TimeUnit.MILLISECONDS).flatMap(new Func1<Location, Observable<City>>() {
+        }).timeout(BuildConfig.HANDLE_LOCATION_TIMEOUT, TimeUnit.MILLISECONDS).onErrorResumeNext(new Func1<Throwable, Observable<? extends Location>>() {
+            @Override
+            public Observable<? extends Location> call(Throwable throwable) {
+                return Observable.error(new LocationNotFound());
+            }
+        }).flatMap(new Func1<Location, Observable<City>>() {
             @Override
             public Observable<City> call(Location location) {
                 return _network.getWeatherWithCoords(Double.toString(location.getLatitude()), Double.toString(location.getLongitude())).map(new Func1<WeatherList, City>() {

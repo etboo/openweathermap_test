@@ -23,6 +23,8 @@ public interface MainListView extends MvpLceView<List<Weather>> {
 
     public void setTitle(String title);
 
+    public void showToast(String text);
+
     public Context getContext();
 
 }

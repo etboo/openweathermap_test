@@ -2,6 +2,7 @@ package com.etb.mainsoftweather.main;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.etb.mainsoftweather.SettingsManager;
 import com.etb.mainsoftweather.Updater;
@@ -11,6 +12,7 @@ import com.etb.mainsoftweather.model.City;
 import com.etb.mainsoftweather.model.Weather;
 import com.etb.mainsoftweather.sources.CitiesModule_ProvideFacadeFactory;
 import com.etb.mainsoftweather.sources.cities.CitiesFacade;
+import com.etb.mainsoftweather.sources.cities.LocationNotFound;
 import com.etb.mainsoftweather.sources.weather.WeatherFacade;
 
 import java.util.List;
@@ -183,8 +185,15 @@ public class MainListPresenter extends MvpLceRxPresenter<MainListView, List<Weat
     protected void onError(Throwable e, boolean pullToRefresh) {
         if(isFatal(e))
             super.onError(e, pullToRefresh);
-        else
+        else {
+            notifyUser(e);
             super.onCompleted();
+        }
+    }
+
+    private void notifyUser(Throwable e) {
+        if(e instanceof LocationNotFound)
+            getView().showToast("Can't find location");
     }
 
     private static boolean isFatal(Throwable e){

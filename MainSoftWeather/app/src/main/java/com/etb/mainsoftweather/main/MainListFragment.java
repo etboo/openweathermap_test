@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.etb.mainsoftweather.MainActivity;
 import com.etb.mainsoftweather.Navigator;
@@ -205,5 +206,10 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
     @Override
     public void setTitle(String title) {
         ((MainActivity)getActivity()).setTitle(title);
+    }
+
+    @Override
+    public void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 }
