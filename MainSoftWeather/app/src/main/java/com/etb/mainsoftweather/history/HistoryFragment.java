@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.etb.mainsoftweather.MainActivity;
 import com.etb.mainsoftweather.R;
 import com.etb.mainsoftweather.WeatherApp;
 import com.etb.mainsoftweather.base.SearchViewWrapper;
@@ -34,7 +35,7 @@ import rx.Observable;
 /**
  * Created by etb on 02.04.16.
  */
-public class HistoryFragment extends MvpLceViewStateFragment<SwipeRefreshLayout, List<Weather>, HistoryListView, HistoryPresenter> implements SwipeRefreshLayout.OnRefreshListener, HistoryListView {
+public class HistoryFragment extends MvpLceViewStateFragment<RecyclerView, List<Weather>, HistoryListView, HistoryPresenter> implements SwipeRefreshLayout.OnRefreshListener, HistoryListView {
 
     private static final String CITY_KEY = HistoryFragment.class.getSimpleName() + ".City";
 
@@ -84,8 +85,6 @@ public class HistoryFragment extends MvpLceViewStateFragment<SwipeRefreshLayout,
 
         recyclerView.setAdapter(_adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        contentView.setOnRefreshListener(this);
-
     }
 
     @Override
@@ -137,26 +136,8 @@ public class HistoryFragment extends MvpLceViewStateFragment<SwipeRefreshLayout,
         _adapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void showContent() {
-        super.showContent();
-        contentView.setRefreshing(false);
-    }
-
-    @Override public void showLoading(boolean pullToRefresh) {
-        super.showLoading(pullToRefresh);
-        if (pullToRefresh && !contentView.isRefreshing()) {
-            contentView.post(new Runnable() {
-                @Override public void run() {
-                    contentView.setRefreshing(true);
-                }
-            });
-        }
-    }
-
     @Override public void showError(Throwable e, boolean pullToRefresh) {
         super.showError(e, pullToRefresh);
-        contentView.setRefreshing(false);
         e.printStackTrace();
     }
 
@@ -172,4 +153,8 @@ public class HistoryFragment extends MvpLceViewStateFragment<SwipeRefreshLayout,
         loadData(true);
     }
 
+    @Override
+    public void setTitle(String title) {
+        ((MainActivity)getActivity()).setTitle(title);
+    }
 }

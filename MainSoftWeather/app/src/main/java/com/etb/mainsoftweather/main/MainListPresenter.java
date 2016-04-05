@@ -112,6 +112,12 @@ public class MainListPresenter extends MvpLceRxPresenter<MainListView, List<Weat
         _subscription = null;
     }
 
+    @Override
+    public void attachView(MainListView view) {
+        super.attachView(view);
+        view.setTitle("Forecast");
+    }
+
     public void loadForecast(boolean pullToRefresh){
         Observable<List<Weather>> observable = _cities.getData(true).flatMap(getForecast(!pullToRefresh));
 

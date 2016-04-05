@@ -20,17 +20,8 @@ public class HistoryPresenter extends MvpLceRxPresenter<HistoryListView, List<We
     private WeatherFacade _weather;
     private City _city;
 
-    private CompositeSubscription _subscription;
-
     @Inject public HistoryPresenter( WeatherFacade weather){
         _weather = weather;
-    }
-
-    private void subscribe(Subscription subscription){
-        if(_subscription == null)
-            _subscription = new CompositeSubscription();
-
-        _subscription.add(subscription);
     }
 
     public void injectCity(City city){
@@ -38,10 +29,9 @@ public class HistoryPresenter extends MvpLceRxPresenter<HistoryListView, List<We
     }
 
     @Override
-    public void detachView(boolean retainInstance) {
-        super.detachView(retainInstance);
-        _subscription.unsubscribe();
-        _subscription = null;
+    public void attachView(HistoryListView view) {
+        super.attachView(view);
+        view.setTitle(_city.name);
     }
 
     public void loadForecast(){

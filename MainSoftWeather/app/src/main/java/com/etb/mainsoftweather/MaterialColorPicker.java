@@ -2,6 +2,7 @@ package com.etb.mainsoftweather;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.ColorRes;
 
 import java.util.Random;
 
@@ -18,13 +19,16 @@ public class MaterialColorPicker {
     private static int sPrev;
 
     public static int getMaterialColor(Context context){
-
         int color = sColors[getRandomValue()];
+        return getColor(context, color);
 
+    }
+
+    public static int getColor(Context context, @ColorRes int res){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return context.getColor(color);
+            return context.getColor(res);
         } else{
-            return context.getResources().getColor(color);
+            return context.getResources().getColor(res);
         }
     }
 

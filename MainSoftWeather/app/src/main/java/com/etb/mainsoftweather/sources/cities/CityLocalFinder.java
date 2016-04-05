@@ -19,7 +19,10 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
+import rx.functions.Action0;
 import rx.functions.Func1;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by etb on 02.04.16.
@@ -30,6 +33,7 @@ public class CityLocalFinder {
 
     Context _context;
     WeatherAPI _network;
+    LocationListener _listener;
 
     public CityLocalFinder(Context context, WeatherAPI network) {
         _context = context;
@@ -37,10 +41,18 @@ public class CityLocalFinder {
     }
 
     public Observable<City> getCityByCurrentLocation(){
-        /*return Utils.<Location>createAndDefer(new Observable.OnSubscribe<Location>() {
+        return Utils.<Location>createAndDefer(new Observable.OnSubscribe<Location>() {
             @Override
             public void call(Subscriber<? super Location> subscriber) {
                 getLocation(subscriber);
+
+                subscriber.add(Subscriptions.create(new Action0(){
+                    @Override
+                    public void call() {
+                        locationManagerFrom(_context).removeUpdates(_listener);
+                        _listener = null;
+                    }
+                }));
             }
         }).timeout(BuildConfig.HANDLE_LOCATION_TIMEOUT, TimeUnit.MILLISECONDS).flatMap(new Func1<Location, Observable<City>>() {
             @Override
@@ -52,8 +64,7 @@ public class CityLocalFinder {
                     }
                 });
             }
-        });*/
-        return Observable.just(mockCity());
+        });
 
     }
 
@@ -72,9 +83,15 @@ public class CityLocalFinder {
 
         Location location = manager.getLastKnownLocation(provider);
 
-        if(!check(location))
-            manager.requestSingleUpdate(provider, getListener(_context, subscriber), Looper.getMainLooper());
-        else {
+        _listener = getListener(_context, subscriber);
+
+        if(!check(location)){
+            manager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 0, 0,
+                    _listener);
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    0, 0, _listener);
+        } else {
             subscriber.onNext(location);
             subscriber.onCompleted();
         }

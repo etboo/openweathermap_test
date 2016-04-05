@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.etb.mainsoftweather.MainActivity;
 import com.etb.mainsoftweather.Navigator;
 import com.etb.mainsoftweather.R;
 import com.etb.mainsoftweather.WeatherApp;
@@ -193,5 +194,10 @@ public class MainListFragment extends MvpLceViewStateFragment<SwipeRefreshLayout
     @Override
     public void navigateToForecast(City city) {
         navigator().goTo(HistoryFragment.newInstance(city));
+    }
+
+    @Override
+    public void setTitle(String title) {
+        ((MainActivity)getActivity()).setTitle(title);
     }
 }

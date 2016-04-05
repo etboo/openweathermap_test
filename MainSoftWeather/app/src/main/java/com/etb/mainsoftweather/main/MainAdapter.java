@@ -91,8 +91,12 @@ public class MainAdapter extends BaseRxRecyclerViewAdapter<MainAdapter.ViewHolde
             __transformer = trasformer;
         }
 
+        private static String round(double value){
+            return String.format("%.02f", value);
+        }
+
         private String formatTemp(float temp){
-            return __transformer == null? Float.toString(temp) : __transformer.transform(temp);
+            return __transformer == null? Float.toString(temp) :round(__transformer.transform(temp)) + " " + __transformer.symbol();
         }
 
         private String getDirection(float deg){

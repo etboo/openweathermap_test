@@ -19,4 +19,6 @@ public interface MainListView extends MvpLceView<List<Weather>> {
 
     public void navigateToForecast(City city);
 
+    public void setTitle(String title);
+
 }

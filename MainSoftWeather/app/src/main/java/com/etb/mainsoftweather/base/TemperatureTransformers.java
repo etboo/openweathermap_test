@@ -6,32 +6,46 @@ package com.etb.mainsoftweather.base;
 public class TemperatureTransformers {
 
     public interface AbsTrasformer {
-        public String transform(float in);
+
+        public float transform(float in);
+
+        public String symbol();
     }
 
     public static AbsTrasformer CELSIUS = new  AbsTrasformer(){
         @Override
-        public String transform(float kelvinValue) {
-            return round(kelvinValue - 273.15) +  " °C";
+        public float transform(float kelvinValue) {
+            return kelvinValue - 273.15f;
+        }
+
+        @Override
+        public String symbol() {
+            return "°C";
         }
     };
 
     public static AbsTrasformer FAHRENHEIT = new  AbsTrasformer(){
         @Override
-        public String transform(float kelvinValue) {
-            return round((kelvinValue * 9)/5 + 459.67) + " °F";
+        public float transform(float kelvinValue) {
+            return (kelvinValue * 9)/5 + 459.67f;
+        }
+
+        @Override
+        public String symbol() {
+            return "°F";
         }
     };
 
     public static AbsTrasformer KELVIN = new  AbsTrasformer(){
         @Override
-        public String transform(float kelvinValue) {
-            return round(kelvinValue) + " K";
+        public float transform(float kelvinValue) {
+            return kelvinValue ;
+        }
+
+        @Override
+        public String symbol() {
+            return "K";
         }
     };
-
-    private static String round(double value){
-        return String.format("%.02f", value);
-    }
 
 }

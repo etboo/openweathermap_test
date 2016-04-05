@@ -2,6 +2,7 @@ package com.etb.mainsoftweather;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -20,10 +21,12 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
 
     @Bind(R.id.toolbar_actionbar)Toolbar toolbar;
 
+    private boolean exit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_city_picker);
+        setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
@@ -55,6 +58,37 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
         return super.onOptionsItemSelected(item);
     }
 
+    private void doubleBackToExit(){
+        if (exit) {
+            finish(); // finish activity
+        } else {
+            Toast.makeText(this, "Press Back again to Exit.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+
+        }
+    }
+
+    public void setActionBarTitle(String title){
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 1) {
+            doubleBackToExit();
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -77,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
     public void goTo(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
                 .commit();
     }
 }

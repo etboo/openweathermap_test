@@ -13,4 +13,5 @@ import rx.Observable;
  */
 public interface HistoryListView extends MvpLceView<List<Weather>> {
 
+    public void setTitle(String title);
 }

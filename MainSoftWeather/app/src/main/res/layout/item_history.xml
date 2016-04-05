@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/historyItem_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:background="@color/material_green"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    tools:context="com.etb.mainsoftweather.MainActivity" >
+
+
+    <TextView style="@style/WhiteText"
+        android:id="@+id/historyItem_updated"
+        android:text="12-12-12 12:12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="2dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="12sp" />
+
+
+    <LinearLayout
+        android:layout_below="@+id/historyItem_updated"
+        android:layout_marginTop="4dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout android:id="@+id/historyItem_tempLayout"
+            android:gravity="right"
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/historyItem_avegare_temperature"
+                android:layout_width="wrap_content"
+                android:singleLine="true"
+                android:layout_gravity="center_vertical|left"
+                android:text="34123.12"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:minEms="3"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                style="@style/WhiteText"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/historyItem_temperature_diff"
+                android:layout_width="wrap_content"
+                android:singleLine="true"
+                android:layout_gravity="top"
+                android:minEms="3"
+                style="@style/WhiteText"
+                android:layout_margin="4dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <RelativeLayout android:id="@+id/historyItem_windLayout"
+            android:orientation="vertical"
+            android:padding="3dp"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                style="@style/WhiteText"
+                android:id="@+id/historyItem_wind_angle"
+                android:layout_width="wrap_content"
+                android:text="W-WS"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp"
+                />
+
+            <TextView
+                style="@style/WhiteText"
+                android:id="@+id/historyItem_wind_speed"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/historyItem_wind_angle"
+                android:layout_margin="5dp"
+                android:text="15 m/s"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="17sp"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
